@@ -1,14 +1,19 @@
 #pragma once
 
-#include "audiofile/AudioFile.h"
+#include <vector>
+#include <iterator>
 
 class ZeroCrossingDetector {
 
 public:
-	ZeroCrossingDetector(AudioFile<double>&& audioFile);
-	void detect();
+	using Samples = std::vector<double>;
+	using Crossings = std::vector<size_t>;
 
-private:
-	AudioFile<double> m_audioFile;
+	ZeroCrossingDetector();
+
+	void detect(
+		Samples::const_iterator begin,
+		Samples::const_iterator end,
+		std::back_insert_iterator<Crossings> inserter);
 };
 

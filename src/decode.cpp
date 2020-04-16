@@ -18,8 +18,13 @@ auto main(int argc, char** argv) -> int {
 	cout << "loaded file" << endl;
 	audioFile.printSummary();
 
-	ZeroCrossingDetector zcDetector(std::move(audioFile));
-	zcDetector.detect();
+	for(int channel = 0; channel < audioFile.getNumChannels(); channel++)
+	{
+		cout << "parsing channel " << channel << endl;
+		// ZeroCrossingDetector zcDetector;
+		// zcDetector.parse(audioFile.sample)
+	}
+	//zcDetector.detect();
 
 	return 0;
 }
