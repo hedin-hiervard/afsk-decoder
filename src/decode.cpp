@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../lib/audiofile/AudioFile.h"
+#include "ZeroCrossingDetector.h"
 
 using namespace std;
 
@@ -16,6 +17,9 @@ auto main(int argc, char** argv) -> int {
 
 	cout << "loaded file" << endl;
 	audioFile.printSummary();
+
+	ZeroCrossingDetector zcDetector(std::move(audioFile));
+	zcDetector.detect();
 
 	return 0;
 }
