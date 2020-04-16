@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../lib/audiofile/AudioFile.h"
+#include "audiofile/AudioFile.h"
 #include "ZeroCrossingDetector.h"
 
 using namespace std;

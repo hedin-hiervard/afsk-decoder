@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../lib/audiofile/AudioFile.h"
+#include "audiofile/AudioFile.h"
 
 class ZeroCrossingDetector {
 

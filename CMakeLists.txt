@@ -10,7 +10,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BIN_DIR})
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-include_directories(src)
+include_directories(src lib)
 
 add_subdirectory(src)
 add_subdirectory(test)
