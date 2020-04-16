@@ -1,2 +1,11 @@
+# platform specific files
 .DS_Store
-out/
+
+# build results
+bin
+
+# cmake files
+Makefile
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles/
