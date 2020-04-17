@@ -36,6 +36,7 @@ TEST_F(BitDetectorTest, detectsZeroOneZero)
     	},
     	samplesPerSecond,
     	0.1,
+        0.1,
     	back_inserter(bits),
     	back_inserter(errors)
     );
@@ -62,6 +63,7 @@ TEST_F(BitDetectorTest, detectsZeroZeroZero)
     	},
     	samplesPerSecond,
     	0.1,
+        0.1,
     	back_inserter(bits),
     	back_inserter(errors)
     );
@@ -90,6 +92,7 @@ TEST_F(BitDetectorTest, detectsFuzzyOneZeroOne)
     	},
     	samplesPerSecond,
     	0.2,
+        0.2,
     	back_inserter(bits),
     	back_inserter(errors)
     );
@@ -116,6 +119,7 @@ TEST_F(BitDetectorTest, shouldNotDetectFuzzyWithZeroVariation)
     	},
     	samplesPerSecond,
     	0.0,
+        0.0,
     	back_inserter(bits),
     	back_inserter(errors)
     );

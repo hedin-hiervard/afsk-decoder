@@ -21,13 +21,13 @@ auto BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numS
 		*m_segmentInserter = { segmentId, segmentLengthInMicroseconds };
 	}
 
-	if(withinVariation(segmentLengthInMicroseconds, ZeroBitLengthInMicroseconds, m_maxVariation)) {
+	if(withinVariation(segmentLengthInMicroseconds, ZeroBitLengthInMicroseconds, m_maxVariationForZero)) {
 		*m_inserter = 0;
 		return {
 			.zeroBits = 1,
 			.oneBits = 0,
 			};
-	} else if(withinVariation(segmentLengthInMicroseconds, OneBitLengthInMicroseconds, m_maxVariation)) {
+	} else if(withinVariation(segmentLengthInMicroseconds, OneBitLengthInMicroseconds, m_maxVariationForOne)) {
 		*m_inserter = 1;
 		return {
 			.zeroBits = 0,
@@ -55,7 +55,8 @@ auto BitDetector::detect(
 		size_t totalSamples,
 		const Crossings& crossings,
 		int samplesPerSecond,
-		double maxVariation,
+		double maxVariationForOne,
+		double maxVariationForZero,
 		std::back_insert_iterator<Bits> inserter,
 		std::back_insert_iterator<Errors> errorInserter,
 		std::optional<std::back_insert_iterator<Segments>> segmentInserter
@@ -67,7 +68,8 @@ auto BitDetector::detect(
 	m_errorInserter = errorInserter;
 	m_segmentInserter = segmentInserter;
 	m_samplesPerSecond = samplesPerSecond;
-	m_maxVariation = maxVariation;
+	m_maxVariationForOne = maxVariationForOne;
+	m_maxVariationForZero = maxVariationForZero;
 
 	Result result;
 

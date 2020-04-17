@@ -35,7 +35,8 @@ public:
 		size_t totalSamples,
 		const Crossings& crossings,
 		int samplesPerSecond,
-		double maxVariation,
+		double maxVariationForOne,
+		double maxVariationForZero,
 		std::back_insert_iterator<Bits> inserter,
 		std::back_insert_iterator<Errors> errorInserter,
 		std::optional<std::back_insert_iterator<Segments>> segmentInserter = {}
@@ -54,5 +55,6 @@ private:
 	std::optional<std::back_insert_iterator<Segments>> m_segmentInserter;
 
 	int m_samplesPerSecond;
-	double m_maxVariation;
+	double m_maxVariationForOne;
+	double m_maxVariationForZero;
 };
