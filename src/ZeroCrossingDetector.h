@@ -7,13 +7,12 @@ class ZeroCrossingDetector {
 
 public:
 	using Samples = std::vector<double>;
-	using Crossings = std::vector<size_t>;
+	using Crossings = std::vector<Samples::size_type>;
 
 	ZeroCrossingDetector();
 
 	void detect(
-		Samples::const_iterator begin,
-		Samples::const_iterator end,
+		const Samples& samples,
 		std::back_insert_iterator<Crossings> inserter);
 };
 

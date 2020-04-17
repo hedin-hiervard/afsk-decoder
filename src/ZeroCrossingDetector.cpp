@@ -7,25 +7,16 @@ using namespace std;
 ZeroCrossingDetector::ZeroCrossingDetector()
 {}
 
-void ZeroCrossingDetector::detect(Samples::const_iterator begin, Samples::const_iterator end, back_insert_iterator<Crossings> inserter) {
-	if(begin == end) { return; }
+void ZeroCrossingDetector::detect(const Samples& samples, back_insert_iterator<Crossings> inserter) {
+	if(samples.empty()) { return; }
 
-	Samples::size_type idx = 0;
-	Samples::const_iterator prev = begin;
-	Samples::const_iterator it = begin;
-	do
+	for(auto idx = 1; idx < samples.size(); idx++)
 	{
-		it++;
-		idx++;
-		if(it == end) { return; }
-
-		const auto& prevSample = *prev;
-		const auto& curSample = *it;
+		const auto& prevSample = samples[idx - 1];
+		const auto& curSample = samples[idx];
  		if(curSample * prevSample < 0) {
  			inserter = idx;
  		}
-
-		prev = it;
-	} while(true);
+	}
 }
 
