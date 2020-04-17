@@ -5,6 +5,7 @@ set(TEST_FILES
 	ZeroCrossingDetector_Test.cpp
 	BitDetector_Test.cpp
 	ByteDetector_Test.cpp
+	MessageDecoder_Test.cpp
 )
 
 add_executable(${BINARY} ${TEST_FILES})
