@@ -105,6 +105,7 @@ MessageDecoder::Messages decodeMessages(const Bytes& bytes) {
 			cout << byte;
 		}
 	}
+	cout << endl;
 	return messages;
 }
 
