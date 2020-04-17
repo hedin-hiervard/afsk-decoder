@@ -22,14 +22,17 @@ TEST_F(ByteDetectorTest, detectsOneByte)
 	ByteDetector::Errors errors;
 	Bytes bytes;
     objectUnderTest.detect(
-    	{ 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1 },
+    	{
+            0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1
+        },
     	back_inserter(bytes),
     	back_inserter(errors)
     );
 
     EXPECT_EQ(0, errors.size());
-    EXPECT_EQ(1, bytes.size());
-    EXPECT_EQ(0x7f, bytes[0]);
+    EXPECT_EQ(2, bytes.size());
+    EXPECT_EQ(0x7f, bytes[1]);
     printErrors(errors);
 }
 
@@ -39,6 +42,7 @@ TEST_F(ByteDetectorTest, detectsThreeByte)
     Bytes bytes;
     objectUnderTest.detect(
         {
+            0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,
             0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,
             0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1,
@@ -48,48 +52,10 @@ TEST_F(ByteDetectorTest, detectsThreeByte)
     );
 
     EXPECT_EQ(0, errors.size());
-    EXPECT_EQ(3, bytes.size());
-    EXPECT_EQ(0x7f, bytes[0]);
+    EXPECT_EQ(4, bytes.size());
     EXPECT_EQ(0x7f, bytes[1]);
-    EXPECT_EQ(0xbf, bytes[2]);
-}
-
-TEST_F(ByteDetectorTest, skipsLeadingTone)
-{
-    ByteDetector::Errors errors;
-    Bytes bytes;
-    objectUnderTest.detect(
-        {
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1,
-        },
-        back_inserter(bytes),
-        back_inserter(errors)
-    );
-
-    EXPECT_EQ(0, errors.size());
-    EXPECT_EQ(1, bytes.size());
-    EXPECT_EQ(0xaa, bytes[0]);
-}
-
-TEST_F(ByteDetectorTest, shouldNotEndTrailingZeroBytes)
-{
-    ByteDetector::Errors errors;
-    Bytes bytes;
-    objectUnderTest.detect(
-        {
-            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1,
-            1, 1, 1, 1, 1, 1, 1, 1,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        },
-        back_inserter(bytes),
-        back_inserter(errors)
-    );
-
-    EXPECT_EQ(1, bytes.size());
-    EXPECT_EQ(0xaa, bytes[0]);
-    EXPECT_EQ(1, errors.size()); // unexpected bitstream termination
+    EXPECT_EQ(0x7f, bytes[2]);
+    EXPECT_EQ(0xbf, bytes[3]);
 }
 
 TEST_F(ByteDetectorTest, shouldFindTwoBytesAfterLeader)
@@ -117,7 +83,7 @@ TEST_F(ByteDetectorTest, shouldFindTwoBytesAfterLeader2)
     Bytes bytes;
     objectUnderTest.detect(
         {
-            0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,
             0,0,1,0,0,0,0,1,0,1,1,
             0,1,1,0,0,0,0,0,0,1,1
@@ -127,6 +93,8 @@ TEST_F(ByteDetectorTest, shouldFindTwoBytesAfterLeader2)
         back_inserter(errors)
     );
 
+    EXPECT_EQ(0xff, bytes.front());
+    EXPECT_EQ(0x42, bytes[bytes.size() - 2]);
     EXPECT_EQ(0x42, bytes[bytes.size() - 2]);
     EXPECT_EQ(0x03, bytes[bytes.size() - 1]);
 

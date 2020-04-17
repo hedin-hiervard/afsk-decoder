@@ -49,6 +49,8 @@ void ByteDetector::detect(
 	m_endOfStreamIt = bits.end();
 	m_errorInserter = errorInserter;
 
+	bool encounteredFFByte = false;
+
 	/* read byte-by-byte */
 	while(!streamEnded()) {
 		skipTo(0);
@@ -85,6 +87,13 @@ void ByteDetector::detect(
 		}
 
 		if(!wellFormedByte) {
+			continue;
+		}
+		if(!encounteredFFByte && currentByte == 0xff) {
+			encounteredFFByte = true;
+		}
+
+		if(!encounteredFFByte) {
 			continue;
 		}
 
