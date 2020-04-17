@@ -49,8 +49,6 @@ void ByteDetector::detect(
 	m_endOfStreamIt = bits.end();
 	m_errorInserter = errorInserter;
 
-	bool parsingLeadingFFBytes = true;
-
 	/* read byte-by-byte */
 	while(!streamEnded()) {
 		skipTo(0);
@@ -90,12 +88,6 @@ void ByteDetector::detect(
 			continue;
 		}
 
-		if(parsingLeadingFFBytes && currentByte != 0xff) {
-			parsingLeadingFFBytes = false;
-		}
-
-		if(!parsingLeadingFFBytes) {
-			inserter = currentByte;
-		}
+		inserter = currentByte;
 	}
 }

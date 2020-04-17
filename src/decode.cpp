@@ -89,9 +89,9 @@ auto main(int argc, char** argv) -> int {
 		}
 
 		cout << "bytes: " << endl;
-		for(const auto& b : bytes) {
-			cout << hex << static_cast<int>(b) << dec << " ";
-		}
+		// for(const auto& b : bytes) {
+		// 	cout << hex << static_cast<int>(b) << dec << " ";
+		// }
 		cout << endl;
 	}
 	return 0;
