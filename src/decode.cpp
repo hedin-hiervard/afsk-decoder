@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "audiofile/AudioFile.h"
 
 #include "ZeroCrossingDetector.h"
@@ -53,9 +54,9 @@ auto main(int argc, char** argv) -> int {
 			back_inserter(segments)
 		);
 
-		for(const auto& s : segments) {
-			cout << "segment " << s.length << endl;
-		}
+		// for(const auto& s : segments) {
+		// 	cout << "segment " << s.length << endl;
+		// }
 
 		cout << "detected " << bits.size() << " bits" << endl;
 		cout << result.zeroBits << " zeros, " << result.oneBits << " ones" << endl;
@@ -86,6 +87,12 @@ auto main(int argc, char** argv) -> int {
 			cout << "byte error: " << e.message << " at bit: " << e.position << endl;
 			cout << "bit context: " << e.bitContext << endl;
 		}
+
+		cout << "bytes: " << endl;
+		for(const auto& b : bytes) {
+			cout << hex << static_cast<int>(b) << dec << " ";
+		}
+		cout << endl;
 	}
 	return 0;
 }
