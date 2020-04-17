@@ -17,6 +17,9 @@ auto BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numS
 {
 	double segmentLengthInSeconds = static_cast<double>(numSamplesInSegment) / static_cast<double>(m_samplesPerSecond);
 	auto segmentLengthInMicroseconds = segmentLengthInSeconds * 1e6;
+	if(m_segmentInserter) {
+		*m_segmentInserter = { segmentId, segmentLengthInMicroseconds };
+	}
 
 	if(withinVariation(segmentLengthInMicroseconds, ZeroBitLengthInMicroseconds, m_maxVariation)) {
 		*m_inserter = 0;
@@ -54,13 +57,15 @@ auto BitDetector::detect(
 		int samplesPerSecond,
 		double maxVariation,
 		std::back_insert_iterator<Bits> inserter,
-		std::back_insert_iterator<Errors> errorInserter
+		std::back_insert_iterator<Errors> errorInserter,
+		std::optional<std::back_insert_iterator<Segments>> segmentInserter
 	) -> Result
 {
 	if(crossings.empty()) { return Result(); }
 
 	m_inserter = inserter;
 	m_errorInserter = errorInserter;
+	m_segmentInserter = segmentInserter;
 	m_samplesPerSecond = samplesPerSecond;
 	m_maxVariation = maxVariation;
 

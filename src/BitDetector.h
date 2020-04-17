@@ -12,6 +12,11 @@ public:
 		std::string message;
 	};
 
+	struct Segment {
+		std::string id;
+		double length;
+	};
+
 	struct Result {
 		size_t oneBits = 0;
 		size_t zeroBits = 0;
@@ -24,6 +29,7 @@ public:
 	};
 
 	using Errors = std::vector<Error>;
+	using Segments = std::vector<Segment>;
 
 	Result detect(
 		size_t totalSamples,
@@ -31,7 +37,8 @@ public:
 		int samplesPerSecond,
 		double maxVariation,
 		std::back_insert_iterator<Bits> inserter,
-		std::back_insert_iterator<Errors> errorInserter
+		std::back_insert_iterator<Errors> errorInserter,
+		std::optional<std::back_insert_iterator<Segments>> segmentInserter = {}
 	);
 private:
 	static double variation(double value, double referenceValue);
@@ -44,6 +51,8 @@ private:
 
 	std::optional<std::back_insert_iterator<Bits>> m_inserter;
 	std::optional<std::back_insert_iterator<Errors>> m_errorInserter;
+	std::optional<std::back_insert_iterator<Segments>> m_segmentInserter;
+
 	int m_samplesPerSecond;
 	double m_maxVariation;
 };

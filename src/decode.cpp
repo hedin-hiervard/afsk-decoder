@@ -41,6 +41,7 @@ auto main(int argc, char** argv) -> int {
 		BitDetector bitDetector;
 		Bits bits;
 		BitDetector::Errors bitErrors;
+		BitDetector::Segments segments;
 
 		auto result = bitDetector.detect(
 			audioFile.samples[channel].size(),
@@ -48,8 +49,14 @@ auto main(int argc, char** argv) -> int {
 			audioFile.getSampleRate(),
 			maxWidthVariation,
 			back_inserter(bits),
-			back_inserter(bitErrors)
+			back_inserter(bitErrors),
+			back_inserter(segments)
 		);
+
+		for(const auto& s : segments) {
+			cout << "segment " << s.length << endl;
+		}
+
 		cout << "detected " << bits.size() << " bits" << endl;
 		cout << result.zeroBits << " zeros, " << result.oneBits << " ones" << endl;
 		cout << bitErrors.size() << " errors " << endl;
