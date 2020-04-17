@@ -11,7 +11,7 @@ using namespace std;
 
 
 bool printRaw = false;
-double maxWidthVariation = 0.0;
+double maxWidthVariation = std::nan("");
 
 Crossings detectZeroCrossings(const Samples& samples) {
 	cout << "detecting zero crossings" << endl;
@@ -115,8 +115,11 @@ auto main(int argc, char** argv) -> int {
 		return 0;
 	}
 	const std::string fileName = argv[1];
-	maxWidthVariation = stod(argv[2]);
-	if(maxWidthVariation < 0.0 || maxWidthVariation > 1.0) {
+	try {
+		maxWidthVariation = stod(argv[2]);
+	} catch(const invalid_argument&) {}
+
+	if(isnan(maxWidthVariation) || maxWidthVariation < 0.0 || maxWidthVariation > 1.0) {
 		cout << "max rectangle width variation must be >= 0.0 and <= 1.0" << endl;
 		return 0;
 	}
@@ -128,10 +131,16 @@ auto main(int argc, char** argv) -> int {
 	cout << "loading " << fileName << endl;
 
 	AudioFile<double> audioFile;
-	audioFile.load(fileName);
+	auto fileLoaded = audioFile.load(fileName);
+
+	if(!fileLoaded) {
+		cout << "failed to load audio file " << fileName << endl;
+		return 0;
+	}
 
 	cout << "loaded file" << endl;
 	audioFile.printSummary();
+
 
 	for(int channel = 0; channel < audioFile.getNumChannels(); channel++)
 	{
