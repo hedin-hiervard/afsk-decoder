@@ -77,12 +77,12 @@ void MessageDecoder::decode(
 		auto expectedChecksum = curByte();
 		auto actualChecksum = messageChecksum(message);
 
+		advanceByte();
 		if(expectedChecksum != actualChecksum) {
 			reportError("checksum error: expected " + to_string(expectedChecksum) + ", actual: " + to_string(actualChecksum));
-			return;
+		} else {
+			*inserter = message;
 		}
-		*inserter = message;
-		advanceByte();
 	}
 
 	if(!streamFinished()) {
