@@ -1,24 +1,21 @@
 #pragma once
 
 #include <string>
+#include <optional>
 
 #include "data_types.h"
 
 class BitDetector {
 public:
-	struct Segment {
-		Crossings::size_type from;
-		Crossings::size_type to;
-	};
-
 	struct Error {
-		Segment segment;
+		std::string segmentId;
 		std::string message;
 	};
 
 	using Errors = std::vector<Error>;
 
 	void detect(
+		size_t totalSamples,
 		const Crossings& crossings,
 		int samplesPerSecond,
 		double maxVariation,
@@ -29,6 +26,13 @@ private:
 	static double variation(double value, double referenceValue);
 	static bool withinVariation(double value, double referenceValue, double maxVariation);
 
+	void detectSegment(std::string&& segmentId, Samples::size_type numSamplesInSegment);
+
 	static constexpr double ZeroBitLengthInMicroseconds = 640;
 	static constexpr double OneBitLengthInMicroseconds = 320;
+
+	std::optional<std::back_insert_iterator<Bits>> m_inserter;
+	std::optional<std::back_insert_iterator<Errors>> m_errorInserter;
+	int m_samplesPerSecond;
+	double m_maxVariation;
 };

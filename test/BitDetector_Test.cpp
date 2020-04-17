@@ -28,6 +28,7 @@ TEST_F(BitDetectorTest, detectsZeroOneZero)
 
 	Bits bits;
     objectUnderTest.detect(
+    	10000,
     	{
     		(currentSample += samplesPerOneBit),
     		(currentSample += samplesPerZeroBit),
@@ -39,7 +40,7 @@ TEST_F(BitDetectorTest, detectsZeroOneZero)
     	back_inserter(errors)
     );
 
-    EXPECT_EQ(0, errors.size());
+    EXPECT_EQ(1, errors.size());
     EXPECT_EQ(3, bits.size());
     EXPECT_EQ(1, bits[0]);
     EXPECT_EQ(0, bits[1]);
@@ -53,6 +54,7 @@ TEST_F(BitDetectorTest, detectsZeroZeroZero)
 
 	Bits bits;
     objectUnderTest.detect(
+    	10000,
     	{
     		(currentSample += samplesPerZeroBit),
     		(currentSample += samplesPerZeroBit),
@@ -64,7 +66,7 @@ TEST_F(BitDetectorTest, detectsZeroZeroZero)
     	back_inserter(errors)
     );
 
-    EXPECT_EQ(0, errors.size());
+    EXPECT_EQ(1, errors.size());
     EXPECT_EQ(3, bits.size());
     EXPECT_EQ(0, bits[0]);
     EXPECT_EQ(0, bits[1]);
@@ -80,6 +82,7 @@ TEST_F(BitDetectorTest, detectsFuzzyOneZeroOne)
 
 	Bits bits;
     objectUnderTest.detect(
+    	10000,
     	{
     		(currentSample += (samplesPerOneBit - 1)),
     		(currentSample += (samplesPerZeroBit + 1)),
@@ -91,9 +94,31 @@ TEST_F(BitDetectorTest, detectsFuzzyOneZeroOne)
     	back_inserter(errors)
     );
 
-    EXPECT_EQ(0, errors.size());
+    EXPECT_EQ(1, errors.size());
     EXPECT_EQ(3, bits.size());
     EXPECT_EQ(1, bits[0]);
     EXPECT_EQ(0, bits[1]);
     EXPECT_EQ(1, bits[2]);
+}
+
+TEST_F(BitDetectorTest, shouldNotDetectFuzzyWithZeroVariation)
+{
+	BitDetector::Errors errors;
+	size_t currentSample = 0;
+
+	Bits bits;
+    objectUnderTest.detect(
+    	10000,
+    	{
+    		(currentSample += (samplesPerOneBit - 1)),
+    		(currentSample += (samplesPerZeroBit + 1)),
+    		(currentSample += (samplesPerOneBit - 2))
+    	},
+    	samplesPerSecond,
+    	0.0,
+    	back_inserter(bits),
+    	back_inserter(errors)
+    );
+
+    EXPECT_EQ(4, errors.size());
 }
