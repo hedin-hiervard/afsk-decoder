@@ -1,11 +1,9 @@
-#include <vector>
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
 #include "ZeroCrossingDetector.h"
 
 using namespace std;
-using ::testing::StrictMock;
 
 class ZeroCrossingDetectorTest : public testing::Test {
 public:
@@ -15,36 +13,36 @@ public:
 
 TEST_F(ZeroCrossingDetectorTest, detectsOneZeroCrossings)
 {
-	vector<double> testSamples;
+	Samples testSamples;
 	testSamples.push_back(-500);
 	for(int i = 0; i < 100; i++) {
 		testSamples.push_back(500);
 	}
 
-	vector<size_t> zeroCrosses;
-    objectUnderTest.detect(testSamples, back_inserter(zeroCrosses));
+	Crossings crossings;
+    objectUnderTest.detect(testSamples, back_inserter(crossings));
 
-    EXPECT_EQ(1, zeroCrosses.size());
+    EXPECT_EQ(1, crossings.size());
 }
 
 TEST_F(ZeroCrossingDetectorTest, worksWithEmptyInputData)
 {
-	vector<double> testSamples;
-	vector<size_t> zeroCrosses;
-    objectUnderTest.detect(testSamples, back_inserter(zeroCrosses));
+	Samples testSamples;
+	Crossings crossings;
+    objectUnderTest.detect(testSamples, back_inserter(crossings));
 
-    EXPECT_EQ(0, zeroCrosses.size());
+    EXPECT_EQ(0, crossings.size());
 }
 
 TEST_F(ZeroCrossingDetectorTest, detectsManyCrossings)
 {
-	vector<double> testSamples;
-	vector<size_t> zeroCrosses;
+	Samples testSamples;
+	Crossings crossings;
 
 	for(int i = 0; i < 100; i++) {
 		testSamples.push_back(500 * (i % 2) ? (-1) : (1));
 	}
-	objectUnderTest.detect(testSamples, back_inserter(zeroCrosses));
+	objectUnderTest.detect(testSamples, back_inserter(crossings));
 
-    EXPECT_EQ(99, zeroCrosses.size());
+    EXPECT_EQ(99, crossings.size());
 }

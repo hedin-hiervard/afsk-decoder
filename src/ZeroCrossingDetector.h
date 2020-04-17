@@ -1,14 +1,12 @@
 #pragma once
 
-#include <vector>
 #include <iterator>
+
+#include "data_types.h"
 
 class ZeroCrossingDetector {
 
 public:
-	using Samples = std::vector<double>;
-	using Crossings = std::vector<Samples::size_type>;
-
 	ZeroCrossingDetector();
 
 	void detect(

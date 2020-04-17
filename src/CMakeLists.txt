@@ -3,6 +3,7 @@ set(BINARY ${CMAKE_PROJECT_NAME})
 set(SOURCE_FILES
 	decode.cpp
 	ZeroCrossingDetector.cpp
+	BitDetector.cpp
 )
 
 add_executable(${BINARY}_run ${SOURCE_FILES}
