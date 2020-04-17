@@ -57,6 +57,12 @@ auto main(int argc, char** argv) -> int {
 			cout << "bit error: " << e.message << " at segment: " << e.segmentId << endl;
 		}
 
+		cout << "bits: " << endl;
+		for(const auto& b: bits) {
+			cout << to_string(b);
+		}
+		cout << endl;
+
 		cout << "detecting bytes" << endl;
 		ByteDetector byteDetector;
 		Bytes bytes;
