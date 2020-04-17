@@ -80,9 +80,9 @@ void MessageDecoder::decode(
 		advanceByte();
 		if(expectedChecksum != actualChecksum) {
 			reportError("checksum error: expected " + to_string(expectedChecksum) + ", actual: " + to_string(actualChecksum));
-		} //else {
-		*inserter = message;
-		//}
+		} else {
+			*inserter = message;
+		}
 	}
 
 	if(!streamFinished()) {
