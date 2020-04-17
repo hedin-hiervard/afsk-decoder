@@ -19,7 +19,7 @@ std::string ByteDetector::currentContext() const {
 	auto contextStart = distance(m_startOfStreamIt, m_curBitIt) > ContextRadius ? (m_curBitIt - ContextRadius) : m_startOfStreamIt;
 	auto contextEnd = distance(m_curBitIt, m_endOfStreamIt) > ContextRadius ? (m_curBitIt + ContextRadius) : m_endOfStreamIt;
 
-	for(auto it = contextStart; it != contextEnd + 5; it++) {
+	for(auto it = contextStart; it != contextEnd; it++) {
 		if(it == m_curBitIt) {
 			context += ">";
 		}
