@@ -10,14 +10,20 @@ using namespace std;
 
 auto main(int argc, char** argv) -> int {
 	if(argc < 3) {
-		cout << "usage: decode <wav file> <rectangle width max variation>" << endl;
+		cout << "usage: decode <wav file> <rectangle width max variation> [--raw]" << endl;
 		return 0;
 	}
+	bool printRaw = false;
+
 	const std::string fileName = argv[1];
 	const double maxWidthVariation = stod(argv[2]);
 	if(maxWidthVariation < 0.0 || maxWidthVariation > 1.0) {
 		cout << "max rectangle width variation must be >= 0.0 and <= 1.0" << endl;
 		return 0;
+	}
+
+	if(argc >= 4 && string(argv[3]) == "--raw") {
+		printRaw = true;
 	}
 
 	cout << "loading " << fileName << endl;
@@ -65,11 +71,13 @@ auto main(int argc, char** argv) -> int {
 			cout << "bit error: " << e.message << " at segment: " << e.segmentId << endl;
 		}
 
-		cout << "bits: " << endl;
-		for(const auto& b: bits) {
-			cout << to_string(b);
+		if(printRaw) {
+			cout << "bits: " << endl;
+			for(const auto& b: bits) {
+				cout << to_string(b);
+			}
+			cout << endl;
 		}
-		cout << endl;
 
 		cout << "detecting bytes" << endl;
 		ByteDetector byteDetector;
@@ -88,11 +96,13 @@ auto main(int argc, char** argv) -> int {
 			cout << "bit context: " << e.bitContext << endl;
 		}
 
-		cout << "bytes: " << endl;
-		for(const auto& b : bytes) {
-			cout << hex << static_cast<int>(b) << dec << " ";
+		if(printRaw) {
+			cout << "bytes: " << endl;
+			for(const auto& b : bytes) {
+				cout << hex << static_cast<int>(b) << dec << " ";
+			}
+			cout << endl;
 		}
-		cout << endl;
 	}
 	return 0;
 }
