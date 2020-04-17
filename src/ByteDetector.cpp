@@ -16,7 +16,11 @@ Bits::size_type ByteDetector::skipTo(Bit valueToStopAt) {
 void ByteDetector::reportError(std::string&& message) {
 	Bits contextBits;
 	std::string context;
-	for(auto it = m_curBitIt - 5; it != m_curBitIt + 5; it++) {
+
+	auto contextStart = distance(m_startOfStreamIt, m_curBitIt) > ContextRadius ? (m_curBitIt - ContextRadius) : m_startOfStreamIt;
+	auto contextEnd = distance(m_curBitIt, m_endOfStreamIt) > ContextRadius ? (m_curBitIt + ContextRadius) : m_endOfStreamIt;
+
+	for(auto it = contextStart; it != contextEnd + 5; it++) {
 		if(it == m_curBitIt) {
 			context += ">";
 		}
