@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "data_types.h"
 
 class BitDetector {
@@ -9,7 +11,12 @@ public:
 		Crossings::size_type to;
 	};
 
-	using Errors = std::vector<Segment>;
+	struct Error {
+		Segment segment;
+		std::string message;
+	};
+
+	using Errors = std::vector<Error>;
 
 	void detect(
 		const Crossings& crossings,
@@ -19,6 +26,7 @@ public:
 		std::back_insert_iterator<Errors> errorInserter
 	);
 private:
+	static double variation(double value, double referenceValue);
 	static bool withinVariation(double value, double referenceValue, double maxVariation);
 
 	static constexpr double ZeroBitLengthInMicroseconds = 640;

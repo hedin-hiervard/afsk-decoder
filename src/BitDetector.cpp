@@ -1,9 +1,16 @@
+#include <iostream>
 #include <cmath>
 
 #include "BitDetector.h"
 
+using namespace std;
+
+double BitDetector::variation(double value, double referenceValue) {
+	return std::abs(referenceValue - value) / referenceValue;
+}
+
 bool BitDetector::withinVariation(double value, double referenceValue, double maxVariation) {
-	return std::abs(referenceValue - value) / referenceValue <= maxVariation;
+	return variation(value, referenceValue) <= maxVariation;
 }
 
 void BitDetector::detect(
@@ -16,24 +23,37 @@ void BitDetector::detect(
 {
 	if(crossings.empty()) { return; }
 
-	double samplesPerMicrosecond = static_cast<double>(samplesPerSecond) * 1e-6;
-
 	for(Crossings::size_type idx = 0; idx < crossings.size(); idx++) {
 		Samples::size_type numSamplesInSegment;
 
 		if(idx > 0) {
-			numSamplesInSegment = crossings[idx] - crossings[idx - 1];
+			if(crossings[idx] > crossings[idx - 1]) {
+				numSamplesInSegment = crossings[idx] - crossings[idx - 1];
+			} else {
+				errorInserter = { { idx - 1, idx }, "segment length negative" };
+				continue;
+			}
 		} else {
 			numSamplesInSegment = crossings[idx];
 		}
-		double segmentLengthInMicroseconds = numSamplesInSegment / samplesPerMicrosecond;;
+		double segmentLengthInSeconds = static_cast<double>(numSamplesInSegment) / static_cast<double>(samplesPerSecond);
+		auto segmentLengthInMicroseconds = segmentLengthInSeconds * 1e6;
 
 		if(withinVariation(segmentLengthInMicroseconds, ZeroBitLengthInMicroseconds, maxVariation)) {
 			inserter = false;
 		} else if(withinVariation(segmentLengthInMicroseconds, OneBitLengthInMicroseconds, maxVariation)) {
 			inserter = true;
 		} else {
-			errorInserter = { idx - 1, idx };
+			errorInserter = {
+				{ idx - 1, idx },
+				"can't recognize segment length "
+					+ to_string(segmentLengthInMicroseconds)
+					+ " microseconds, "
+					+ " variation from zero: "
+					+ to_string(variation(segmentLengthInMicroseconds, ZeroBitLengthInMicroseconds))
+					+ " variation from one: "
+					+ to_string(variation(segmentLengthInMicroseconds, OneBitLengthInMicroseconds))
+			};
 		}
 	}
 }
