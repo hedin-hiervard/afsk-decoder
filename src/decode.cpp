@@ -69,6 +69,7 @@ auto main(int argc, char** argv) -> int {
 		cout << "detected " << bytes.size() << " bytes, " << byteErrors.size() << " errors " << endl;
 		for(const auto& e: byteErrors) {
 			cout << "byte error: " << e.message << " at bit: " << e.position << endl;
+			cout << "bit context: " << e.bitContext << endl;
 		}
 	}
 	return 0;

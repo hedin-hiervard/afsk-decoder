@@ -1,5 +1,6 @@
+#include <algorithm>
+
 #include "ByteDetector.h"
-#include <iostream>
 
 using namespace std;
 
@@ -13,7 +14,18 @@ Bits::size_type ByteDetector::skipTo(Bit valueToStopAt) {
 }
 
 void ByteDetector::reportError(std::string&& message) {
-	*m_errorInserter = { bitsRead(), message };
+	Bits contextBits;
+	std::string context;
+	for(auto it = m_curBitIt - 5; it != m_curBitIt + 5; it++) {
+		if(it == m_curBitIt) {
+			context += ">";
+		}
+		context = context + to_string(*it);
+		if(it == m_curBitIt) {
+			context += "<";
+		}
+	}
+	*m_errorInserter = { bitsRead(), message, context };
 }
 
 void ByteDetector::detect(

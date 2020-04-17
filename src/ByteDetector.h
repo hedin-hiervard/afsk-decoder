@@ -11,6 +11,7 @@ public:
 	struct Error {
 		Bits::size_type position;
 		std::string message;
+		std::string bitContext;
 	};
 
 	using Errors = std::vector<Error>;
