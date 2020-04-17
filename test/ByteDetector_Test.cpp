@@ -110,3 +110,26 @@ TEST_F(ByteDetectorTest, shouldFindTwoBytesAfterLeader)
     EXPECT_EQ(0x03, bytes[bytes.size() - 1]);
     printErrors(errors);
 }
+
+TEST_F(ByteDetectorTest, shouldFindTwoBytesAfterLeader2)
+{
+    ByteDetector::Errors errors;
+    Bytes bytes;
+    objectUnderTest.detect(
+        {
+            0, 0, 0, 0, 0, 0, 0, 0,
+            1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,
+            0,0,1,0,0,0,0,1,0,1,1,
+            0,1,1,0,0,0,0,0,0,1,1
+
+        },
+        back_inserter(bytes),
+        back_inserter(errors)
+    );
+
+    EXPECT_EQ(0x42, bytes[bytes.size() - 2]);
+    EXPECT_EQ(0x03, bytes[bytes.size() - 1]);
+
+    printErrors(errors);
+}
+
