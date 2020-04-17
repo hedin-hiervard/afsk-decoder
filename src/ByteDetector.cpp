@@ -1,5 +1,6 @@
 #include <algorithm>
 
+#include <iostream>
 #include "ByteDetector.h"
 
 using namespace std;
@@ -48,11 +49,12 @@ void ByteDetector::detect(
 	m_endOfStreamIt = bits.end();
 	m_errorInserter = errorInserter;
 
-	/* skip leading tone */
-	Bits::size_type leadingBits = skipTo(0);
+	bool parsingLeadingFFBytes = true;
 
 	/* read byte-by-byte */
 	while(!streamEnded()) {
+		skipTo(0);
+
 		Byte currentByte = 0;
 
 		/* the pointer is at the start-bit */
@@ -78,18 +80,22 @@ void ByteDetector::detect(
 				return;
 			}
 			if(curBit() != 1) {
-				reportError("missing stop-bit");
 				wellFormedByte = false;
 				break;
 			}
 			advanceOneBit();
 		}
-		if(wellFormedByte) {
-			inserter = currentByte;
+
+		if(!wellFormedByte) {
+			continue;
 		}
-		auto skipped = skipTo(0);
-		if(skipped > 1) {
-			return;
+
+		if(parsingLeadingFFBytes && currentByte != 0xff) {
+			parsingLeadingFFBytes = false;
+		}
+
+		if(!parsingLeadingFFBytes) {
+			inserter = currentByte;
 		}
 	}
 }
