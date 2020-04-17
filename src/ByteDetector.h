@@ -34,5 +34,5 @@ private:
 	Bits::const_iterator m_curBitIt;
 	Bits::const_iterator m_endOfStreamIt;
 	std::optional<std::back_insert_iterator<Errors>> m_errorInserter;
-	static constexpr Bits::size_type ContextRadius = 5;
+	static constexpr Bits::size_type ContextRadius = 10;
 };
