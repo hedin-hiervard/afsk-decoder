@@ -30,6 +30,9 @@ private:
 	inline bool streamFinished() const { return m_curByteIt == m_streamEndIt; }
 	inline Byte curByte() const { return *m_curByteIt; }
 	inline void advanceByte() { m_curByteIt++; }
+
+	static Byte messageChecksum(const Message& message);
+
 	void reportError(std::string&& message);
 
 	Bytes::size_type skipTo(Byte val);

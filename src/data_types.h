@@ -4,6 +4,7 @@
 
 using Bit = short;
 using Byte = std::uint8_t;
+using DoubleByte = std::uint16_t;
 using Samples = std::vector<double>;
 using Crossings = std::vector<Samples::size_type>;
 using Bits = std::vector<Bit>;

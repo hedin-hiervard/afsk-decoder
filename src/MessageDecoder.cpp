@@ -1,6 +1,20 @@
+#include <numeric>
+
+#include <iostream>
 #include "MessageDecoder.h"
 
 using namespace std;
+
+Byte MessageDecoder::messageChecksum(const Message& message) {
+	Byte result = 0x0;
+	for(const auto& byte : message) {
+		result = static_cast<Byte>((
+			static_cast<DoubleByte>(result) +
+			static_cast<DoubleByte>(byte)
+		) % (numeric_limits<Byte>().max() + 1));
+	}
+	return result;
+}
 
 void MessageDecoder::reportError(std::string&& message) {
 	*m_errorInserter = {
@@ -47,6 +61,8 @@ void MessageDecoder::decode(
 		return;
 	}
 
+	advanceByte();
+
 	while(!streamFinished()) {
 		if(distance(m_curByteIt, m_streamEndIt) <= MessageSize) {
 			break;
@@ -54,13 +70,24 @@ void MessageDecoder::decode(
 		Message message;
 		copy_n(m_curByteIt, MessageSize, message.begin());
 		advance(m_curByteIt, MessageSize);
+		if(streamFinished()) {
+			reportError("no checksum found");
+			return;
+		}
+		auto expectedChecksum = curByte();
+		auto actualChecksum = messageChecksum(message);
+
+		if(expectedChecksum != actualChecksum) {
+			reportError("checksum error: expected " + to_string(expectedChecksum) + ", actual: " + to_string(actualChecksum));
+			return;
+		}
 		*inserter = message;
+		advanceByte();
 	}
 
-	if(streamFinished()) {
+	if(!streamFinished()) {
 		reportError("unfinished message");
 		return;
 	}
-
 
 }

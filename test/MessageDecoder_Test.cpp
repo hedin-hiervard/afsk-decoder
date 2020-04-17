@@ -35,7 +35,7 @@ TEST_F(MessageDecoderTest, shouldDecodeSimpleMessage)
         0xaa, 0xaa, 0xaa,
         0xaa, 0xaa, 0xaa,
         0xaa, 0xaa, 0xaa,
-        0xbb
+        0xec
     },
         back_inserter(messages),
         back_inserter(errors)
@@ -43,6 +43,7 @@ TEST_F(MessageDecoderTest, shouldDecodeSimpleMessage)
 
     EXPECT_EQ(1, messages.size());
     EXPECT_EQ(0, errors.size());
+    printErrors(errors);
 }
 
 
@@ -66,5 +67,4 @@ TEST_F(MessageDecoderTest, shouldDecodeRealWorldMessage)
     EXPECT_EQ(1, messages.size());
     EXPECT_EQ(0, errors.size());
     printErrors(errors);
-
 }
