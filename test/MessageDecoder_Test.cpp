@@ -90,6 +90,6 @@ TEST_F(MessageDecoderTest, shouldSkipBadChecksummedMessages)
         back_inserter(errors)
     );
 
-    EXPECT_EQ(2, messages.size());
+    EXPECT_EQ(1, messages.size());
     EXPECT_EQ(1, errors.size());
 }

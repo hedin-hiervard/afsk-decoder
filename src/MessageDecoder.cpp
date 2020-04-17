@@ -26,7 +26,7 @@ void MessageDecoder::reportError(std::string&& message) {
 Bytes::size_type MessageDecoder::skipTo(Byte val) {
 	Bytes::size_type res = 0;
 	while(!streamFinished() && curByte() != val) {
-		m_curByteIt++;
+		advanceByte();
 		res++;
 	}
 	return res;
@@ -44,24 +44,22 @@ void MessageDecoder::decode(
 
 	m_errorInserter = errorInserter;
 
-	/* skip leading 0xff */
-	while(!streamFinished() && curByte() == 0xff) {
+	while(!streamFinished()) {
+		skipTo(0x42);
+		if(streamFinished()) {
+			reportError("header not found");
+			return;
+		}
 		advanceByte();
+		if(streamFinished()) {
+			reportError("header not found");
+			return;
+		}
+		if(curByte() == 0x03) {
+			advanceByte();
+			break; // header found
+		}
 	}
-
-	if(streamFinished() || curByte() != 0x42) {
-		reportError("header error");
-		return;
-	}
-
-	advanceByte();
-
-	if(streamFinished() || curByte() != 0x03) {
-		reportError("header error");
-		return;
-	}
-
-	advanceByte();
 
 	while(!streamFinished()) {
 		if(distance(m_curByteIt, m_streamEndIt) <= MessageSize) {
