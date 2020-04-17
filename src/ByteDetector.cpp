@@ -71,6 +71,7 @@ void ByteDetector::detect(
 
 		/* the pointer is at first stop-bit */
 
+		bool wellFormedByte = true;
 		for(short x = 0; x < 2; x++) {
 			if(streamEnded()) {
 				reportError("stream ended before stop-bit");
@@ -78,11 +79,17 @@ void ByteDetector::detect(
 			}
 			if(curBit() != 1) {
 				reportError("missing stop-bit");
+				wellFormedByte = false;
 				break;
 			}
 			advanceOneBit();
 		}
-		inserter = currentByte;
-		skipTo(0);
+		if(wellFormedByte) {
+			inserter = currentByte;
+		}
+		auto skipped = skipTo(0);
+		if(skipped > 1) {
+			return;
+		}
 	}
 }

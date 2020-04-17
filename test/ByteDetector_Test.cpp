@@ -8,6 +8,13 @@ using namespace std;
 class ByteDetectorTest : public testing::Test {
 public:
     ByteDetector objectUnderTest;
+
+    void printErrors(const ByteDetector::Errors& errors) {
+        for(const auto& e: errors) {
+            cout << "byte error: " << e.message << " at bit: " << e.position << endl;
+            cout << "bit context: " << e.bitContext << endl;
+        }
+    }
 };
 
 TEST_F(ByteDetectorTest, detectsOneByte)
@@ -81,4 +88,25 @@ TEST_F(ByteDetectorTest, skipsLeadinAndTrailingTones)
     EXPECT_EQ(0, errors.size());
     EXPECT_EQ(1, bytes.size());
     EXPECT_EQ(0xaa, bytes[0]);
+}
+
+TEST_F(ByteDetectorTest, shouldNotEndTrailingZeroBytes)
+{
+    ByteDetector::Errors errors;
+    Bytes bytes;
+    objectUnderTest.detect(
+        {
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1,
+            1, 1, 1, 1, 1, 1, 1, 1,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        },
+        back_inserter(bytes),
+        back_inserter(errors)
+    );
+
+    EXPECT_EQ(0, errors.size());
+    EXPECT_EQ(1, bytes.size());
+    EXPECT_EQ(0xaa, bytes[0]);
+    printErrors(errors);
 }
