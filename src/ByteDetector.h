@@ -28,6 +28,7 @@ private:
 	inline void advanceOneBit() { m_curBitIt++; }
 	inline Bits::size_type bitsRead() const { return std::distance(m_startOfStreamIt, m_curBitIt); }
 	void reportError(std::string&& message);
+	std::string currentContext() const;
 
 	Bits::const_iterator m_startOfStreamIt;
 	Bits::const_iterator m_curBitIt;

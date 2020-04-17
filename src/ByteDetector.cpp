@@ -13,8 +13,7 @@ Bits::size_type ByteDetector::skipTo(Bit valueToStopAt) {
 	return skipped;
 }
 
-void ByteDetector::reportError(std::string&& message) {
-	Bits contextBits;
+std::string ByteDetector::currentContext() const {
 	std::string context;
 
 	auto contextStart = distance(m_startOfStreamIt, m_curBitIt) > ContextRadius ? (m_curBitIt - ContextRadius) : m_startOfStreamIt;
@@ -29,7 +28,13 @@ void ByteDetector::reportError(std::string&& message) {
 			context += "<";
 		}
 	}
-	*m_errorInserter = { bitsRead(), message, context };
+	return context;
+}
+
+void ByteDetector::reportError(std::string&& message) {
+	Bits contextBits;
+
+	*m_errorInserter = { bitsRead(), message, currentContext() };
 }
 
 void ByteDetector::detect(
@@ -59,6 +64,7 @@ void ByteDetector::detect(
 			}
 			currentByte |= (curBit() << x);
 		}
+
 		/* the pointer is at the last bit */
 
 		advanceOneBit();
