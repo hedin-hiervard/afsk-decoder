@@ -13,15 +13,23 @@ bool BitDetector::withinVariation(double value, double referenceValue, double ma
 	return variation(value, referenceValue) <= maxVariation;
 }
 
-void BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numSamplesInSegment)
+auto BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numSamplesInSegment) -> Result
 {
 	double segmentLengthInSeconds = static_cast<double>(numSamplesInSegment) / static_cast<double>(m_samplesPerSecond);
 	auto segmentLengthInMicroseconds = segmentLengthInSeconds * 1e6;
 
 	if(withinVariation(segmentLengthInMicroseconds, ZeroBitLengthInMicroseconds, m_maxVariation)) {
-		*m_inserter = false;
+		*m_inserter = 0;
+		return {
+			.zeroBits = 1,
+			.oneBits = 0,
+			};
 	} else if(withinVariation(segmentLengthInMicroseconds, OneBitLengthInMicroseconds, m_maxVariation)) {
-		*m_inserter = true;
+		*m_inserter = 1;
+		return {
+			.zeroBits = 0,
+			.oneBits = 1,
+			};
 	} else {
 		*m_errorInserter = {
 			segmentId,
@@ -33,41 +41,48 @@ void BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numS
 				+ " variation from one: "
 				+ to_string(variation(segmentLengthInMicroseconds, OneBitLengthInMicroseconds))
 		};
+		return {
+			.zeroBits = 0,
+			.oneBits = 0,
+			};
 	}
 }
 
-void BitDetector::detect(
+auto BitDetector::detect(
 		size_t totalSamples,
 		const Crossings& crossings,
 		int samplesPerSecond,
 		double maxVariation,
 		std::back_insert_iterator<Bits> inserter,
 		std::back_insert_iterator<Errors> errorInserter
-	)
+	) -> Result
 {
-	if(crossings.empty()) { return; }
+	if(crossings.empty()) { return Result(); }
 
 	m_inserter = inserter;
 	m_errorInserter = errorInserter;
 	m_samplesPerSecond = samplesPerSecond;
 	m_maxVariation = maxVariation;
 
+	Result result;
+
 	/* from zero to first crossing */
-	detectSegment("leading", crossings[0]);
+	result += detectSegment("leading", crossings[0]);
 
 	for(Crossings::size_type idx = 1; idx < crossings.size(); idx++) {
 		if(crossings[idx] > totalSamples) {
 			errorInserter = { to_string(idx), "segment outside totalSamples" };
-			return;
+			return result;
 		}
 		if(crossings[idx] >= crossings[idx - 1]) {
 			Samples::size_type numSamplesInSegment = crossings[idx] - crossings[idx - 1];
-			detectSegment(to_string(idx - 1) + " - " + to_string(idx), numSamplesInSegment);
+			result += detectSegment(to_string(idx - 1) + " - " + to_string(idx), numSamplesInSegment);
 		} else {
 			errorInserter = { to_string(idx), "segment length negative" };
 			continue;
 		}
 	}
 
-	detectSegment("trailing", totalSamples - crossings.back());
+	result += detectSegment("trailing", totalSamples - crossings.back());
+	return result;
 }

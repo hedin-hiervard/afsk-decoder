@@ -12,9 +12,20 @@ public:
 		std::string message;
 	};
 
+	struct Result {
+		size_t oneBits = 0;
+		size_t zeroBits = 0;
+
+		Result operator+=(const Result& other) {
+			oneBits += other.oneBits;
+			zeroBits += other.zeroBits;
+			return *this;
+		}
+	};
+
 	using Errors = std::vector<Error>;
 
-	void detect(
+	Result detect(
 		size_t totalSamples,
 		const Crossings& crossings,
 		int samplesPerSecond,
@@ -26,7 +37,7 @@ private:
 	static double variation(double value, double referenceValue);
 	static bool withinVariation(double value, double referenceValue, double maxVariation);
 
-	void detectSegment(std::string&& segmentId, Samples::size_type numSamplesInSegment);
+	Result detectSegment(std::string&& segmentId, Samples::size_type numSamplesInSegment);
 
 	static constexpr double ZeroBitLengthInMicroseconds = 640;
 	static constexpr double OneBitLengthInMicroseconds = 320;
