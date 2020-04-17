@@ -4,6 +4,7 @@ set(SOURCE_FILES
 	decode.cpp
 	ZeroCrossingDetector.cpp
 	BitDetector.cpp
+	ByteDetector.cpp
 )
 
 add_executable(${BINARY}_run ${SOURCE_FILES}

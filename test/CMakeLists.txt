@@ -4,6 +4,7 @@ set(TEST_FILES
 	main.cpp
 	ZeroCrossingDetector_Test.cpp
 	BitDetector_Test.cpp
+	ByteDetector_Test.cpp
 )
 
 add_executable(${BINARY} ${TEST_FILES})
