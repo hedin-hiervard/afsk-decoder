@@ -36,8 +36,8 @@ TEST_F(BitDetectorTest, detectsZeroOneZero)
         10000,
     	samplesPerSecond,
     	{
-            .zeroBitWidthInMicroseconds = { 600, 680 },
-            .oneBitWidthInMicroseconds = { 300, 320 },
+            .zeroBitRangeInMicroseconds = { 600, 680 },
+            .oneBitRangeInMicroseconds = { 300, 320 },
         },
     	back_inserter(bits),
     	back_inserter(errors)
@@ -65,8 +65,8 @@ TEST_F(BitDetectorTest, detectsZeroZeroZero)
         10000,
     	samplesPerSecond,
     	{
-            .zeroBitWidthInMicroseconds = { 600, 680 },
-            .oneBitWidthInMicroseconds = { 300, 320 },
+            .zeroBitRangeInMicroseconds = { 600, 680 },
+            .oneBitRangeInMicroseconds = { 300, 320 },
         },
     	back_inserter(bits),
     	back_inserter(errors)
@@ -96,8 +96,8 @@ TEST_F(BitDetectorTest, detectsFuzzyOneZeroOne)
         10000,
     	samplesPerSecond,
     	{
-            .zeroBitWidthInMicroseconds = { 500, 800 },
-            .oneBitWidthInMicroseconds = { 200, 400 },
+            .zeroBitRangeInMicroseconds = { 500, 800 },
+            .oneBitRangeInMicroseconds = { 200, 400 },
         },
     	back_inserter(bits),
     	back_inserter(errors)
@@ -125,8 +125,8 @@ TEST_F(BitDetectorTest, shouldNotDetectFuzzyWithZeroVariation)
         10000,
     	samplesPerSecond,
         {
-            .zeroBitWidthInMicroseconds = { 640, 640 },
-            .oneBitWidthInMicroseconds = { 320, 320 },
+            .zeroBitRangeInMicroseconds = { 640, 640 },
+            .oneBitRangeInMicroseconds = { 320, 320 },
         },
     	back_inserter(bits),
     	back_inserter(errors)

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-bool BitDetector::withinLimits(double value, const MinMax& limits) {
+bool BitDetector::withinLimits(double value, const Range& limits) {
 	return (limits.min <= value) && (value <= limits.max);
 }
 
@@ -17,13 +17,13 @@ auto BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numS
 		*m_segmentInserter = { segmentId, segmentLengthInMicroseconds };
 	}
 
-	if(withinLimits(segmentLengthInMicroseconds, m_rectangleWidthSettings.zeroBitWidthInMicroseconds)) {
+	if(withinLimits(segmentLengthInMicroseconds, m_bitRanges.zeroBitRangeInMicroseconds)) {
 		*m_inserter = 0;
 		return {
 			.zeroBits = 1,
 			.oneBits = 0,
 			};
-	} else if(withinLimits(segmentLengthInMicroseconds, m_rectangleWidthSettings.oneBitWidthInMicroseconds)) {
+	} else if(withinLimits(segmentLengthInMicroseconds, m_bitRanges.oneBitRangeInMicroseconds)) {
 		*m_inserter = 1;
 		return {
 			.zeroBits = 0,
@@ -47,7 +47,7 @@ auto BitDetector::detect(
 		const Crossings& crossings,
 		size_t totalSamples,
 		int samplesPerSecond,
-		RectangleWidthSettings&& rectangleWidthSettings,
+		BitRanges&& bitRanges,
 		std::back_insert_iterator<Bits> inserter,
 		std::back_insert_iterator<Errors> errorInserter,
 		std::optional<std::back_insert_iterator<Segments>> segmentInserter
@@ -59,7 +59,7 @@ auto BitDetector::detect(
 	m_errorInserter = errorInserter;
 	m_segmentInserter = segmentInserter;
 	m_samplesPerSecond = samplesPerSecond;
-	m_rectangleWidthSettings = rectangleWidthSettings;
+	m_bitRanges = bitRanges;
 
 	Result result;
 

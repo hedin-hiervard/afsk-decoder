@@ -6,6 +6,7 @@ set(SOURCE_FILES
 	BitDetector.cpp
 	ByteDetector.cpp
 	MessageDecoder.cpp
+	AfskDecoder.cpp
 )
 
 add_executable(${BINARY}_run ${SOURCE_FILES}
