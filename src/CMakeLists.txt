@@ -1,7 +1,7 @@
 set(BINARY ${CMAKE_PROJECT_NAME})
 
 set(SOURCE_FILES
-	decode.cpp
+	main.cpp
 	ZeroCrossingDetector.cpp
 	BitDetector.cpp
 	ByteDetector.cpp
