@@ -9,10 +9,13 @@
 
 using namespace std;
 
-
 bool printRaw = false;
-double maxVariationForOne = std::nan("");
-double maxVariationForZero = std::nan("");
+
+double zeroMinWidth = 600.0;
+double zeroMaxWidth = 680.0;
+
+double oneMinWidth = 300.0;
+double oneMaxWidth = 340.0;
 
 Crossings detectZeroCrossings(const Samples& samples) {
 	cout << "detecting zero crossings" << endl;
@@ -31,11 +34,13 @@ Bits detectBits(const Crossings& crossings, Samples::size_type totalSamples, int
 	BitDetector::Segments segments;
 
 	auto result = bitDetector.detect(
-		totalSamples,
 		crossings,
+		totalSamples,
 		samplesPerSecond,
-		maxVariationForOne,
-		maxVariationForZero,
+		{
+			.zeroBitWidthInMicroseconds = { zeroMinWidth, zeroMaxWidth },
+			.oneBitWidthInMicroseconds = { oneMinWidth, oneMaxWidth },
+		},
 		back_inserter(bits),
 		back_inserter(bitErrors),
 		back_inserter(segments)
@@ -112,28 +117,11 @@ MessageDecoder::Messages decodeMessages(const Bytes& bytes) {
 }
 
 auto main(int argc, char** argv) -> int {
-	if(argc < 4) {
-		cout << "usage: decode <wav file> <max rectangle variation for 1> <max rectangle variation for 0> [--raw]" << endl;
+	if(argc < 1) {
+		cout << "usage: decode <wav file>" << endl;
 		return 0;
 	}
 	const std::string fileName = argv[1];
-	try {
-		maxVariationForOne = stod(argv[2]);
-		maxVariationForZero = stod(argv[3]);
-	} catch(const invalid_argument&) {}
-
-	if(isnan(maxVariationForOne) || maxVariationForOne < 0.0 || maxVariationForOne > 1.0) {
-		cout << "max variation for 1 must be >= 0.0 and <= 1.0" << endl;
-		return 0;
-	}
-	if(isnan(maxVariationForZero) || maxVariationForZero < 0.0 || maxVariationForZero > 1.0) {
-		cout << "max variation for 0 must be >= 0.0 and <= 1.0" << endl;
-		return 0;
-	}
-
-	if(argc >= 5 && string(argv[4]) == "--raw") {
-		printRaw = true;
-	}
 
 	cout << "loading " << fileName << endl;
 

@@ -28,22 +28,30 @@ public:
 		}
 	};
 
+	struct MinMax {
+		double min;
+		double max;
+	};
+
+	struct RectangleWidthSettings {
+		MinMax zeroBitWidthInMicroseconds;
+		MinMax oneBitWidthInMicroseconds;
+	};
+
 	using Errors = std::vector<Error>;
 	using Segments = std::vector<Segment>;
 
 	Result detect(
-		size_t totalSamples,
 		const Crossings& crossings,
+		size_t totalSamples,
 		int samplesPerSecond,
-		double maxVariationForOne,
-		double maxVariationForZero,
+		RectangleWidthSettings&& rectangleWidthSettings,
 		std::back_insert_iterator<Bits> inserter,
 		std::back_insert_iterator<Errors> errorInserter,
 		std::optional<std::back_insert_iterator<Segments>> segmentInserter = {}
 	);
 private:
-	static double variation(double value, double referenceValue);
-	static bool withinVariation(double value, double referenceValue, double maxVariation);
+	static bool withinLimits(double value, const MinMax& limits);
 
 	Result detectSegment(std::string&& segmentId, Samples::size_type numSamplesInSegment);
 
@@ -55,6 +63,5 @@ private:
 	std::optional<std::back_insert_iterator<Segments>> m_segmentInserter;
 
 	int m_samplesPerSecond;
-	double m_maxVariationForOne;
-	double m_maxVariationForZero;
+	RectangleWidthSettings m_rectangleWidthSettings;
 };

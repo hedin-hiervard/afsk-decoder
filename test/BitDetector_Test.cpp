@@ -28,15 +28,17 @@ TEST_F(BitDetectorTest, detectsZeroOneZero)
 
 	Bits bits;
     objectUnderTest.detect(
-    	10000,
     	{
     		(currentSample += samplesPerOneBit),
     		(currentSample += samplesPerZeroBit),
     		(currentSample += samplesPerOneBit),
     	},
+        10000,
     	samplesPerSecond,
-    	0.1,
-        0.1,
+    	{
+            .zeroBitWidthInMicroseconds = { 600, 680 },
+            .oneBitWidthInMicroseconds = { 300, 320 },
+        },
     	back_inserter(bits),
     	back_inserter(errors)
     );
@@ -55,15 +57,17 @@ TEST_F(BitDetectorTest, detectsZeroZeroZero)
 
 	Bits bits;
     objectUnderTest.detect(
-    	10000,
     	{
     		(currentSample += samplesPerZeroBit),
     		(currentSample += samplesPerZeroBit),
     		(currentSample += samplesPerZeroBit),
     	},
+        10000,
     	samplesPerSecond,
-    	0.1,
-        0.1,
+    	{
+            .zeroBitWidthInMicroseconds = { 600, 680 },
+            .oneBitWidthInMicroseconds = { 300, 320 },
+        },
     	back_inserter(bits),
     	back_inserter(errors)
     );
@@ -84,15 +88,17 @@ TEST_F(BitDetectorTest, detectsFuzzyOneZeroOne)
 
 	Bits bits;
     objectUnderTest.detect(
-    	10000,
     	{
     		(currentSample += (samplesPerOneBit - 1)),
     		(currentSample += (samplesPerZeroBit + 1)),
     		(currentSample += (samplesPerOneBit - 2))
     	},
+        10000,
     	samplesPerSecond,
-    	0.2,
-        0.2,
+    	{
+            .zeroBitWidthInMicroseconds = { 500, 800 },
+            .oneBitWidthInMicroseconds = { 200, 400 },
+        },
     	back_inserter(bits),
     	back_inserter(errors)
     );
@@ -111,15 +117,17 @@ TEST_F(BitDetectorTest, shouldNotDetectFuzzyWithZeroVariation)
 
 	Bits bits;
     objectUnderTest.detect(
-    	10000,
     	{
     		(currentSample += (samplesPerOneBit - 1)),
     		(currentSample += (samplesPerZeroBit + 1)),
     		(currentSample += (samplesPerOneBit - 2))
     	},
+        10000,
     	samplesPerSecond,
-    	0.0,
-        0.0,
+        {
+            .zeroBitWidthInMicroseconds = { 640, 640 },
+            .oneBitWidthInMicroseconds = { 320, 320 },
+        },
     	back_inserter(bits),
     	back_inserter(errors)
     );

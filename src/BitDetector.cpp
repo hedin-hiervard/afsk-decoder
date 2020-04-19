@@ -5,12 +5,8 @@
 
 using namespace std;
 
-double BitDetector::variation(double value, double referenceValue) {
-	return std::abs(referenceValue - value) / referenceValue;
-}
-
-bool BitDetector::withinVariation(double value, double referenceValue, double maxVariation) {
-	return variation(value, referenceValue) <= maxVariation;
+bool BitDetector::withinLimits(double value, const MinMax& limits) {
+	return (limits.min <= value) && (value <= limits.max);
 }
 
 auto BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numSamplesInSegment) -> Result
@@ -21,13 +17,13 @@ auto BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numS
 		*m_segmentInserter = { segmentId, segmentLengthInMicroseconds };
 	}
 
-	if(withinVariation(segmentLengthInMicroseconds, ZeroBitLengthInMicroseconds, m_maxVariationForZero)) {
+	if(withinLimits(segmentLengthInMicroseconds, m_rectangleWidthSettings.zeroBitWidthInMicroseconds)) {
 		*m_inserter = 0;
 		return {
 			.zeroBits = 1,
 			.oneBits = 0,
 			};
-	} else if(withinVariation(segmentLengthInMicroseconds, OneBitLengthInMicroseconds, m_maxVariationForOne)) {
+	} else if(withinLimits(segmentLengthInMicroseconds, m_rectangleWidthSettings.oneBitWidthInMicroseconds)) {
 		*m_inserter = 1;
 		return {
 			.zeroBits = 0,
@@ -38,11 +34,7 @@ auto BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numS
 			segmentId,
 			"can't recognize segment length "
 				+ to_string(segmentLengthInMicroseconds)
-				+ " microseconds, "
-				+ " variation from zero: "
-				+ to_string(variation(segmentLengthInMicroseconds, ZeroBitLengthInMicroseconds))
-				+ " variation from one: "
-				+ to_string(variation(segmentLengthInMicroseconds, OneBitLengthInMicroseconds))
+				+ " microseconds"
 		};
 		return {
 			.zeroBits = 0,
@@ -52,11 +44,10 @@ auto BitDetector::detectSegment(std::string&& segmentId, Samples::size_type numS
 }
 
 auto BitDetector::detect(
-		size_t totalSamples,
 		const Crossings& crossings,
+		size_t totalSamples,
 		int samplesPerSecond,
-		double maxVariationForOne,
-		double maxVariationForZero,
+		RectangleWidthSettings&& rectangleWidthSettings,
 		std::back_insert_iterator<Bits> inserter,
 		std::back_insert_iterator<Errors> errorInserter,
 		std::optional<std::back_insert_iterator<Segments>> segmentInserter
@@ -68,8 +59,7 @@ auto BitDetector::detect(
 	m_errorInserter = errorInserter;
 	m_segmentInserter = segmentInserter;
 	m_samplesPerSecond = samplesPerSecond;
-	m_maxVariationForOne = maxVariationForOne;
-	m_maxVariationForZero = maxVariationForZero;
+	m_rectangleWidthSettings = rectangleWidthSettings;
 
 	Result result;
 
