@@ -19,11 +19,13 @@ double zeroMaxWidth;
 double oneMinWidth;
 double oneMaxWidth;
 
+Samples::size_type zcDetectResolution;
+
 Crossings detectZeroCrossings(const Samples& samples) {
 	cout << "detecting zero crossings" << endl;
 	ZeroCrossingDetector zcDetector;
 	Crossings crossings;
-	zcDetector.detect(samples, back_inserter(crossings));
+	zcDetector.detect(samples, zcDetectResolution, back_inserter(crossings));
 	cout << "detected " << crossings.size() << " zero-crossings " << endl;
 	return crossings;
 }
@@ -145,6 +147,11 @@ auto main(int argc, char** argv) -> int {
 		.action([](const std::string& value) { return std::stod(value); })
 		.default_value(360.0);
 
+	program.add_argument("--zc-resolution")
+		.help("resolution of zero-crossing detection in number of samples")
+		.action([](const std::string& value) { return std::stol(value); })
+		.default_value(20);
+
 	program.add_argument("--raw")
 		.help("print raw bits and bytes")
 		.default_value(false)
@@ -165,6 +172,7 @@ auto main(int argc, char** argv) -> int {
 	oneMinWidth = program.get<double>("--min-one");
 	oneMaxWidth = program.get<double>("--max-one");
 	printRaw = program.get<bool>("--raw");
+	zcDetectResolution = program.get<Samples::size_type>("--zc-resolution");
 
 	cout << "loading " << filename << endl;
 

@@ -9,6 +9,7 @@ class ZeroCrossingDetectorTest : public testing::Test {
 public:
 
     ZeroCrossingDetector objectUnderTest;
+    static constexpr Samples::size_type resolution = 20;
 };
 
 TEST_F(ZeroCrossingDetectorTest, detectsOneZeroCrossings)
@@ -20,7 +21,7 @@ TEST_F(ZeroCrossingDetectorTest, detectsOneZeroCrossings)
 	}
 
 	Crossings crossings;
-    objectUnderTest.detect(testSamples, back_inserter(crossings));
+    objectUnderTest.detect(testSamples, resolution, back_inserter(crossings));
 
     EXPECT_EQ(1, crossings.size());
 }
@@ -29,7 +30,7 @@ TEST_F(ZeroCrossingDetectorTest, worksWithEmptyInputData)
 {
 	Samples testSamples;
 	Crossings crossings;
-    objectUnderTest.detect(testSamples, back_inserter(crossings));
+    objectUnderTest.detect(testSamples, resolution, back_inserter(crossings));
 
     EXPECT_EQ(0, crossings.size());
 }
@@ -42,7 +43,7 @@ TEST_F(ZeroCrossingDetectorTest, detectsManyCrossings)
 	for(int i = 0; i < 100; i++) {
 		testSamples.push_back(500 * (i % 2) ? (-1) : (1));
 	}
-	objectUnderTest.detect(testSamples, back_inserter(crossings));
+	objectUnderTest.detect(testSamples, resolution, back_inserter(crossings));
 
     EXPECT_EQ(99, crossings.size());
 }

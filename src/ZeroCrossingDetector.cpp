@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#include "dj_fft/dj_fft.h"
+
 #include "ZeroCrossingDetector.h"
 
 using namespace std;
@@ -7,7 +9,11 @@ using namespace std;
 ZeroCrossingDetector::ZeroCrossingDetector()
 {}
 
-void ZeroCrossingDetector::detect(const Samples& samples, back_insert_iterator<Crossings> inserter) {
+void ZeroCrossingDetector::detect(
+	const Samples& samples,
+	Samples::size_type resolutionInSamples,
+	back_insert_iterator<Crossings> inserter
+) {
 	if(samples.empty()) { return; }
 
 	for(auto idx = 1; idx < samples.size(); idx++)
