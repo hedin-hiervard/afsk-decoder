@@ -150,7 +150,7 @@ auto main(int argc, char** argv) -> int {
 	program.add_argument("--zc-resolution")
 		.help("resolution of zero-crossing detection in number of samples")
 		.action([](const std::string& value) { return std::stoi(value); })
-		.default_value(20);
+		.default_value(512);
 
 	program.add_argument("--raw")
 		.help("print raw bits and bytes")
@@ -161,18 +161,30 @@ auto main(int argc, char** argv) -> int {
 	    program.parse_args(argc, argv);
 	 }
 	 catch (const std::runtime_error& err) {
-		std::cout << err.what() << std::endl;
-		std::cout << program;
+	 	cout << "bad argument" << endl;
+		cout << program.help().str() << endl;
+		return 1;
+	 }
+	 catch (const std::invalid_argument& err) {
+	 	cout << "bad argument" << endl;
+		cout << program.help().str() << endl;
 		return 1;
 	 }
 
-	auto filename = program.get<string>("--file");
-	zeroMinWidth = program.get<double>("--min-zero");
-	zeroMaxWidth = program.get<double>("--max-zero");
-	oneMinWidth = program.get<double>("--min-one");
-	oneMaxWidth = program.get<double>("--max-one");
-	printRaw = program.get<bool>("--raw");
-	zcDetectResolution = program.get<int>("--zc-resolution");
+	std::string filename;
+	try {
+		filename = program.get<string>("--file");
+		zeroMinWidth = program.get<double>("--min-zero");
+		zeroMaxWidth = program.get<double>("--max-zero");
+		oneMinWidth = program.get<double>("--min-one");
+		oneMaxWidth = program.get<double>("--max-one");
+		printRaw = program.get<bool>("--raw");
+		zcDetectResolution = program.get<int>("--zc-resolution");
+	} catch(const std::runtime_error) {
+		cout << "bad argument" << endl;
+		cout << program.help().str() << endl;
+		return 1;
+	}
 
 	cout << "loading " << filename << endl;
 
