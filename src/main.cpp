@@ -129,18 +129,26 @@ auto main(int argc, char** argv) -> int {
 		.help("min width of zero rectangle in microseconds")
 		.action([](const std::string& value) { return std::stod(value); })
 		.default_value(600.0);
+
 	program.add_argument("--max-zero")
 		.help("max width of zero rectangle in microseconds")
 		.action([](const std::string& value) { return std::stod(value); })
 		.default_value(680.0);
+
 	program.add_argument("--min-one")
 		.help("min width of one rectangle in microseconds")
 		.action([](const std::string& value) { return std::stod(value); })
 		.default_value(300.0);
+
 	program.add_argument("--max-one")
 		.help("max width of one rectangle in microseconds")
 		.action([](const std::string& value) { return std::stod(value); })
 		.default_value(360.0);
+
+	program.add_argument("--raw")
+		.help("print raw bits and bytes")
+		.default_value(false)
+		.implicit_value(true);
 
 	try {
 	    program.parse_args(argc, argv);
@@ -156,6 +164,7 @@ auto main(int argc, char** argv) -> int {
 	zeroMaxWidth = program.get<double>("--max-zero");
 	oneMinWidth = program.get<double>("--min-one");
 	oneMaxWidth = program.get<double>("--max-one");
+	printRaw = program.get<bool>("--raw");
 
 	cout << "loading " << filename << endl;
 
