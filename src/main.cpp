@@ -101,7 +101,10 @@ auto main(int argc, char** argv) -> int {
 
 	AfskDecoder decoder;
 
-	auto coutWriter = [](std::string msg) { cout << msg; };
+	auto normalWriter = [](std::string msg) { cout << msg; };
+	auto redWriter = [](std::string msg) { cout << "\x1B[31m" << msg << "\033[0m"; };
+	auto magentaWriter = [](std::string msg) { cout << msg; };
+
 	decoder.decode(
 		move(filename),
 		{
@@ -109,10 +112,10 @@ auto main(int argc, char** argv) -> int {
 			.oneBitRangeInMicroseconds = { oneMinWidth, oneMaxWidth },
 		},
 		zcDetectResolution,
-		printInfo ? coutWriter : nullptr,
-		printErrors ? coutWriter : nullptr,
-		coutWriter,
-		printRaw ? coutWriter : nullptr
+		printInfo ? normalWriter : nullptr,
+		printErrors ? redWriter : nullptr,
+		normalWriter,
+		printRaw ? magentaWriter : nullptr
 	);
 	return 0;
 }

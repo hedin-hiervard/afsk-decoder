@@ -93,12 +93,13 @@ MessageDecoder::Messages AfskDecoder::decodeMessages(const Bytes& bytes) {
 	}
 
 	message("messages:\n");
+	message("=========\n\n");
 	for(const auto& m : messages) {
 		for(const auto& byte : m) {
 			message(string(1, static_cast<char>(byte)));
 		}
 	}
-	message("\n");
+	message("\n\n");
 	return messages;
 }
 
