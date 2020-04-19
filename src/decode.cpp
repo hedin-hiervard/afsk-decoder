@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "audiofile/AudioFile.h"
+#include "argparse.hpp"
 
 #include "ZeroCrossingDetector.h"
 #include "BitDetector.h"
@@ -8,14 +9,15 @@
 #include "MessageDecoder.h"
 
 using namespace std;
+using namespace argparse;
 
-bool printRaw = false;
+bool printRaw;
 
-double zeroMinWidth = 600.0;
-double zeroMaxWidth = 680.0;
+double zeroMinWidth;
+double zeroMaxWidth;
 
-double oneMinWidth = 300.0;
-double oneMaxWidth = 340.0;
+double oneMinWidth;
+double oneMaxWidth;
 
 Crossings detectZeroCrossings(const Samples& samples) {
 	cout << "detecting zero crossings" << endl;
@@ -117,19 +119,51 @@ MessageDecoder::Messages decodeMessages(const Bytes& bytes) {
 }
 
 auto main(int argc, char** argv) -> int {
-	if(argc < 1) {
-		cout << "usage: decode <wav file>" << endl;
-		return 0;
-	}
-	const std::string fileName = argv[1];
+	ArgumentParser program("afsk decoder");
 
-	cout << "loading " << fileName << endl;
+	program.add_argument("-f", "--file")
+		.help("input wav file to decode")
+		.required();
+
+	program.add_argument("--min-zero")
+		.help("min width of zero rectangle in microseconds")
+		.action([](const std::string& value) { return std::stod(value); })
+		.default_value(600.0);
+	program.add_argument("--max-zero")
+		.help("max width of zero rectangle in microseconds")
+		.action([](const std::string& value) { return std::stod(value); })
+		.default_value(680.0);
+	program.add_argument("--min-one")
+		.help("min width of one rectangle in microseconds")
+		.action([](const std::string& value) { return std::stod(value); })
+		.default_value(300.0);
+	program.add_argument("--max-one")
+		.help("max width of one rectangle in microseconds")
+		.action([](const std::string& value) { return std::stod(value); })
+		.default_value(360.0);
+
+	try {
+	    program.parse_args(argc, argv);
+	 }
+	 catch (const std::runtime_error& err) {
+		std::cout << err.what() << std::endl;
+		std::cout << program;
+		exit(1);
+	 }
+
+	auto filename = program.get<string>("--file");
+	zeroMinWidth = program.get<double>("--min-zero");
+	zeroMaxWidth = program.get<double>("--max-zero");
+	oneMinWidth = program.get<double>("--min-one");
+	oneMaxWidth = program.get<double>("--max-one");
+
+	cout << "loading " << filename << endl;
 
 	AudioFile<double> audioFile;
-	auto fileLoaded = audioFile.load(fileName);
+	auto fileLoaded = audioFile.load(filename);
 
 	if(!fileLoaded) {
-		cout << "failed to load audio file " << fileName << endl;
+		cout << "failed to load audio file " << filename << endl;
 		return 0;
 	}
 
