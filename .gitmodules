@@ -7,6 +7,3 @@
 [submodule "lib/argparse"]
 	path = lib/argparse
 	url = git@github.com:p-ranav/argparse.git
-[submodule "lib/dj_fft"]
-	path = lib/dj_fft
-	url = git@github.com:jdupuy/dj_fft.git
