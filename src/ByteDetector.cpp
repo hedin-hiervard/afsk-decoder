@@ -55,6 +55,10 @@ void ByteDetector::detect(
 	while(!streamEnded()) {
 		skipTo(0);
 
+		if(streamEnded()) {
+			return;
+		}
+
 		Byte currentByte = 0;
 
 		/* the pointer is at the start-bit */
