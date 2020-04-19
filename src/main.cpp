@@ -149,7 +149,7 @@ auto main(int argc, char** argv) -> int {
 
 	program.add_argument("--zc-resolution")
 		.help("resolution of zero-crossing detection in number of samples")
-		.action([](const std::string& value) { return std::stol(value); })
+		.action([](const std::string& value) { return std::stoi(value); })
 		.default_value(20);
 
 	program.add_argument("--raw")
@@ -163,7 +163,7 @@ auto main(int argc, char** argv) -> int {
 	 catch (const std::runtime_error& err) {
 		std::cout << err.what() << std::endl;
 		std::cout << program;
-		exit(1);
+		return 1;
 	 }
 
 	auto filename = program.get<string>("--file");
@@ -172,7 +172,7 @@ auto main(int argc, char** argv) -> int {
 	oneMinWidth = program.get<double>("--min-one");
 	oneMaxWidth = program.get<double>("--max-one");
 	printRaw = program.get<bool>("--raw");
-	zcDetectResolution = program.get<Samples::size_type>("--zc-resolution");
+	zcDetectResolution = program.get<int>("--zc-resolution");
 
 	cout << "loading " << filename << endl;
 
