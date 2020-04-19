@@ -1,13 +1,9 @@
-#include <stdio.h>
-
-#include "dj_fft/dj_fft.h"
+#include <iostream>
+#include <numeric>
 
 #include "ZeroCrossingDetector.h"
 
 using namespace std;
-
-ZeroCrossingDetector::ZeroCrossingDetector()
-{}
 
 void ZeroCrossingDetector::detect(
 	const Samples& samples,
@@ -16,13 +12,16 @@ void ZeroCrossingDetector::detect(
 ) {
 	if(samples.empty()) { return; }
 
-	for(auto idx = 1; idx < samples.size(); idx++)
-	{
-		const auto& prevSample = samples[idx - 1];
-		const auto& curSample = samples[idx];
- 		if(curSample * prevSample < 0) {
- 			inserter = idx;
- 		}
+	for(Crossings::size_type windowBegin = 0; windowBegin + resolutionInSamples < samples.size(); windowBegin += 1) {
+		auto windowEnd = windowBegin + resolutionInSamples;
+		const auto windowMiddle = (windowBegin + resolutionInSamples / 2);
+
+		double leftSum = accumulate(samples.begin() + windowBegin, samples.begin() +  + windowMiddle, 0.0);
+		double rightSum = accumulate(samples.begin() + windowMiddle, samples.begin() +  + windowEnd, 0.0);
+
+		if(leftSum * rightSum < 0) {
+			inserter = windowMiddle;
+		}
 	}
 }
 

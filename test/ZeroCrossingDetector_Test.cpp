@@ -9,7 +9,7 @@ class ZeroCrossingDetectorTest : public testing::Test {
 public:
 
     ZeroCrossingDetector objectUnderTest;
-    static constexpr Samples::size_type resolution = 20;
+    static constexpr Samples::size_type resolution = 2;
 };
 
 TEST_F(ZeroCrossingDetectorTest, detectsOneZeroCrossings)
@@ -45,5 +45,5 @@ TEST_F(ZeroCrossingDetectorTest, detectsManyCrossings)
 	}
 	objectUnderTest.detect(testSamples, resolution, back_inserter(crossings));
 
-    EXPECT_EQ(99, crossings.size());
+    EXPECT_EQ(98, crossings.size());
 }

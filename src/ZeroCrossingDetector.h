@@ -7,8 +7,6 @@
 class ZeroCrossingDetector {
 
 public:
-	ZeroCrossingDetector();
-
 	void detect(
 		const Samples& samples,
 		Samples::size_type resolutionInSamples,
