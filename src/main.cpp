@@ -28,7 +28,7 @@ auto main(int argc, char** argv) -> int {
 	program.add_argument("--min-one")
 		.help("min width of one rectangle in microseconds")
 		.action([](const std::string& value) { return std::stod(value); })
-		.default_value(300.0);
+		.default_value(220.0);
 
 	program.add_argument("--max-one")
 		.help("max width of one rectangle in microseconds")
@@ -38,7 +38,7 @@ auto main(int argc, char** argv) -> int {
 	program.add_argument("--zc-resolution")
 		.help("resolution of zero-crossing detection in number of samples")
 		.action([](const std::string& value) { return std::stoi(value); })
-		.default_value(512);
+		.default_value(3);
 
 	program.add_argument("--raw")
 		.help("print raw bits and bytes")
