@@ -1,7 +1,7 @@
 AFSK Decoder
 ============
 
-This is configurable command-line Audio Frequency Shift-Keying (AFSK) wav-file decoder. It extracts textual information from provided wav-files. It was made to solve Paradox Cat's coding challenge. For the technical details see `doc` directory.
+This is configurable command-line Audio Frequency Shift-Keying (AFSK) wav-file decoder. It extracts textual information from provided wav-files. It was made to solve Paradox Cat's coding challenge. 
 
 Building
 --------
